@@ -78,14 +78,16 @@ NetFlow est un outil de recherche d'adresse mail de professionel en fonction ave
   ##📈Résultats
 
 ✅ Temps d’exécution : ~20 secondes (avec quelques captchas à remplir).
-✅ Un fichier results.csv est généré contenant les informations suivantes :
 
+✅ Un fichier results.csv est généré contenant les informations suivantes :
 Nom
 Adresse E-mail
 Poste (ou Localisation)
 Entreprise actuelle
 Lien LinkedIn
 Description sommaire (si disponible)
+
+
 ✅ Le dossier dist/ est créé automatiquement mais peut être supprimé après l'exécution.
 
 
