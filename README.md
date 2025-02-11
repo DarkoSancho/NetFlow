@@ -4,8 +4,6 @@
 
 NetFlow est un outil de recherche d'adresse mail de professionel en fonction avec des filtres.
 
-# 🚀 NetFlow - Recherche d'Adresses Mail Professionnelles
-
 **NetFlow** est un outil puissant conçu pour faciliter la prospection B2B en automatisant la recherche d'adresses e-mail professionnelles. Grâce à ses **filtres avancés**, il permet de cibler précisément les prospects en fonction de **critères spécifiques** (secteur, poste, localisation, etc.).
 
 ---
