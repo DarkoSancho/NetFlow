@@ -26,24 +26,34 @@ def CreateRech(email,country, j_title, w_include, w_exclude, Education):
 
     if any(param is not None for param in [j_title, w_include, w_exclude]):
         if j_title is not None:
-            separated_words_j = j_title.split()
-            Res += 'intitle:'
+            separated_words_j = j_title.split(',')
+            Res += ' -intitle:'
             for i in range(0,len(separated_words_j)):
-                Res+=f'"{separated_words_j[i]}"'
+                Res+=f'+"{separated_words_j[i]}"'
         if w_include is not None:
-            separated_words_i = w_include.split()
-            Res += 'intitle:'
+            separated_words_i = w_include.split(',')
+            Res += ' -intitle:'
             for i in range(0,len(separated_words_i)):
-                Res+=f'"{separated_words_i[i]}"'
+                Res+=f'+"{separated_words_i[i]}"'
         if w_exclude is not None:
-            separated_words_e = w_exclude.split()
-            Res += 'intitle:'
+            separated_words_e = w_exclude.split(',')
+            Res += ' -intitle:'
             for i in range(0,len(separated_words_e)):
-                Res+=f'"{separated_words_e[i]}"'
+                Res+=f'-"{separated_words_e[i]}"'
 
-    Res += f' -intitle:"profiles" -inurl:"dir/'  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
+    Res += f' -intitle:"profiles" -inurl:'  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
     if email is not None:
         Res +=f'+"@{email}"'
+    else:
+        emails = [
+        "gmail.com",
+        "outlook.com",
+        "hotmail.fr",
+        "yahoo.fr",    
+        ]
+        Res +=f'"{emails[0]}"'
+        for i in range (1,len(emails)):
+            Res+=f'OR"{emails[i]}"'
     if country is not None:
         Res += f'+site:{country}.linkedin.com/in/+OR+site:{country}.linkedin.com/pub/'
     else:
@@ -278,31 +288,14 @@ def get_user_input():
             selected_options[key] = None
     
     results={}
-    if selected_options["email"]==None:
-        emails = [
-        "gmail.com",
-        "outlook.com",
-        "hotmail.fr",
-        "yahoo.fr",    
-        ]
 
-        for i in range(0,len(emails)):
-            search_url = CreateRech(
-                emails[i], selected_options["country"], selected_options["j_title"],
-                selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
-            )
+    search_url = CreateRech(
+            selected_options["email"], selected_options["country"], selected_options["j_title"],
+            selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
+        )
 
-            print("\n URL Générée :", search_url)  
-            results.update(getresults(search_url, selected_options["Nb_pages"]))
-
-    else:
-            search_url = CreateRech(
-                selected_options["email"], selected_options["country"], selected_options["j_title"],
-                selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
-            )
-
-            print("\n URL Générée :", search_url) 
-            results.update(getresults(search_url, selected_options["Nb_pages"]))
+    print("\n URL Générée :", search_url) 
+    results.update(getresults(search_url, selected_options["Nb_pages"]))
     # # Affichage des résultats
     # print("\n **Résultats trouvés :**")
     # for name, info in results.items():
