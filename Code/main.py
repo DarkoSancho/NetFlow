@@ -22,19 +22,41 @@ def CreateRech(email,country, j_title, w_include, w_exclude, Education):
         root.withdraw()  # Cache la fenêtre principale
         messagebox.showerror("Erreur", "No results for your search or the search is to wide")
         sys.exit(1)
-    Res = "https://www.google.com/search?q=~"
+    Res = "https://www.google.com/search?q=+"
 
     if any(param is not None for param in [j_title, w_include, w_exclude]):
         if j_title is not None:
-            Res += f'+"{j_title}"'
+            separated_words_j = j_title.split(',')
+            Res += ' -intitle:'
+            for i in range(0,len(separated_words_j)):
+                Res+=f'+"{separated_words_j[i]}"'
         if w_include is not None:
-            Res += f'+"{w_include}"'
+            separated_words_i = w_include.split(',')
+            Res += ' -intitle:'
+            for i in range(0,len(separated_words_i)):
+                Res+=f'+"{separated_words_i[i]}"'
         if w_exclude is not None:
-            Res += f' -"{w_exclude}"'
+            separated_words_e = w_exclude.split(',')
+            Res += ' -intitle:'
+            for i in range(0,len(separated_words_e)):
+                Res+=f'-"{separated_words_e[i]}"'
 
-    Res += f' -intitle:"profiles" -inurl:"dir/'  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
+    Res += f' -intitle:"profiles"'  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
     if email is not None:
-        Res +=f'+"@{email}"'
+        Res +='-inurl:'
+        if email =="":
+            emails = [
+            "gmail.com",
+            "outlook.com",
+            "hotmail.fr",
+            "yahoo.fr",    
+            ]
+            Res +=f'"{emails[0]}"'
+            for i in range (1,len(emails)):
+                Res+=f'OR"{emails[i]}"'
+        else:
+            Res +=f'+"@{email}"'
+
     if country is not None:
         Res += f'+site:{country}.linkedin.com/in/+OR+site:{country}.linkedin.com/pub/'
     else:
@@ -210,32 +232,39 @@ def save_to_csv(results, filename="results.csv"):
         messagebox.showerror("Erreur", "No results for your search")
         sys.exit(1)
         return
-    
-    output_dir = "dist"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)  # Création du dossier s'il n'existe pas
 
-    filepath = os.path.join(output_dir, filename)
+    # Chemin vers le répertoire courant (où le script est exécuté)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(current_dir, filename)
+    print(f"Chemin d'enregistrement : {filepath}")  # Affiche le chemin d'accès
+
     headers = ["Identity", "Email", "Post", "Current Firm", "Link", "Full Name (Page Title)", "Other"]
 
-    with open(filename, mode="w", newline="", encoding="utf-8") as file:
+    with open(filepath, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
-        writer.writerow(headers)  
+        writer.writerow(headers)
 
         for name, info in results.items():
             writer.writerow([
-                info.get("identity"),  
+                info.get("identity"),
                 info.get("email"),
                 info.get("poste"),
                 info.get("entreprise"),
                 info.get("link"),
-                clean(name),  
+                clean(name),
                 clean(info.get("other")),
             ])
 
+    # Ouvrir le fichier avec l'application par défaut
+    if sys.platform == "win32":
+        os.startfile(filepath)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filepath])
+
     root = tk.Tk()
     root.withdraw()  # Cache la fenêtre principale
-    messagebox.showinfo("Succès", f"Fichier '{filename}' enregistré avec succès !")
+    messagebox.showinfo("Succès", f"Fichier '{filename}' enregistré avec succès et ouvert dans le répertoire courant !")
 
 
 def get_user_input():
@@ -269,31 +298,14 @@ def get_user_input():
             selected_options[key] = None
     
     results={}
-    if selected_options["email"]==None:
-        emails = [
-        "gmail.com",
-        "outlook.com",
-        "hotmail.fr",
-        "yahoo.fr",    
-        ]
 
-        for i in range(0,len(emails)):
-            search_url = CreateRech(
-                emails[i], selected_options["country"], selected_options["j_title"],
-                selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
-            )
+    search_url = CreateRech(
+            selected_options["email"], selected_options["country"], selected_options["j_title"],
+            selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
+        )
 
-            #print("\n🔗 URL Générée :", search_url)  
-            results.update(getresults(search_url, selected_options["Nb_pages"]))
-
-    else:
-            search_url = CreateRech(
-                selected_options["email"], selected_options["country"], selected_options["j_title"],
-                selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
-            )
-
-            #print("\n URL Générée :", search_url) 
-            results.update(getresults(search_url, selected_options["Nb_pages"]))
+    print("\n URL Générée :", search_url) 
+    results.update(getresults(search_url, selected_options["Nb_pages"]))
     # # Affichage des résultats
     # print("\n **Résultats trouvés :**")
     # for name, info in results.items():
