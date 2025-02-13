@@ -69,16 +69,17 @@ NetFlow est un outil de recherche d'adresse mail de professionel en fonction ave
 🌶️Number of pages:
 - Nombre de page visité par visite
 
-⚠️-Règles obligatoires-⚠️
+⚠️-Règles obligatoires-⚠️:
 -🌶️ Champ obligatoirement coché
 -⚠Il faut cocher obligatoirement une case entre Job_title, Keyword to include/exclude et Level of study pour le bon déroulement du code
 
-
+📝Notes:
+- Si vous voulez renseigner plusieurs mots à inclure il faut [les séparer par des virgules]
 ---
 
   ##📈Résultats
 
-✅ Temps d’exécution : ~20 secondes (avec quelques captchas à remplir).
+✅ Temps d’exécution : ~20 secondes (avec un captcha à remplir).
 
 ✅ Un fichier results.csv est généré contenant les informations suivantes :
 Nom
@@ -87,9 +88,6 @@ Poste (ou Localisation)
 Entreprise actuelle
 Lien LinkedIn
 Description sommaire (si disponible)
-
-
-✅ Le dossier dist/ est créé automatiquement mais peut être supprimé après l'exécution.
 
 
 ---
