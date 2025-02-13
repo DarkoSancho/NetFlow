@@ -41,19 +41,22 @@ def CreateRech(email,country, j_title, w_include, w_exclude, Education):
             for i in range(0,len(separated_words_e)):
                 Res+=f'-"{separated_words_e[i]}"'
 
-    Res += f' -intitle:"profiles" -inurl:'  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
+    Res += f' -intitle:"profiles"'  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
     if email is not None:
-        Res +=f'+"@{email}"'
-    else:
-        emails = [
-        "gmail.com",
-        "outlook.com",
-        "hotmail.fr",
-        "yahoo.fr",    
-        ]
-        Res +=f'"{emails[0]}"'
-        for i in range (1,len(emails)):
-            Res+=f'OR"{emails[i]}"'
+        Res +='-inurl:'
+        if email =="":
+            emails = [
+            "gmail.com",
+            "outlook.com",
+            "hotmail.fr",
+            "yahoo.fr",    
+            ]
+            Res +=f'"{emails[0]}"'
+            for i in range (1,len(emails)):
+                Res+=f'OR"{emails[i]}"'
+        else:
+            Res +=f'+"@{email}"'
+
     if country is not None:
         Res += f'+site:{country}.linkedin.com/in/+OR+site:{country}.linkedin.com/pub/'
     else:
@@ -229,32 +232,39 @@ def save_to_csv(results, filename="results.csv"):
         messagebox.showerror("Erreur", "No results for your search")
         sys.exit(1)
         return
-    
-    output_dir = "dist"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)  # Création du dossier s'il n'existe pas
 
-    filepath = os.path.join(output_dir, filename)
+    # Chemin vers le répertoire courant (où le script est exécuté)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(current_dir, filename)
+    print(f"Chemin d'enregistrement : {filepath}")  # Affiche le chemin d'accès
+
     headers = ["Identity", "Email", "Post", "Current Firm", "Link", "Full Name (Page Title)", "Other"]
 
-    with open(filename, mode="w", newline="", encoding="utf-8") as file:
+    with open(filepath, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
-        writer.writerow(headers)  
+        writer.writerow(headers)
 
         for name, info in results.items():
             writer.writerow([
-                info.get("identity"),  
+                info.get("identity"),
                 info.get("email"),
                 info.get("poste"),
                 info.get("entreprise"),
                 info.get("link"),
-                clean(name),  
+                clean(name),
                 clean(info.get("other")),
             ])
 
+    # Ouvrir le fichier avec l'application par défaut
+    if sys.platform == "win32":
+        os.startfile(filepath)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filepath])
+
     root = tk.Tk()
     root.withdraw()  # Cache la fenêtre principale
-    messagebox.showinfo("Succès", f"Fichier '{filename}' enregistré avec succès !")
+    messagebox.showinfo("Succès", f"Fichier '{filename}' enregistré avec succès et ouvert dans le répertoire courant !")
 
 
 def get_user_input():
