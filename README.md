@@ -39,6 +39,7 @@ NetFlow est un outil de recherche d'adresse mail de professionel en fonction ave
 
  ##📜 Manuel d'utilisation
 
+ ---
 🚀Lancer NetFlow.exe 🚀
   
  Au lancement du .exe, nous obtenons la fenêtre suivante:
@@ -75,10 +76,12 @@ NetFlow est un outil de recherche d'adresse mail de professionel en fonction ave
 
 📝Notes:
 - Si vous voulez renseigner plusieurs mots il faut [les séparer par des virgules]
----
+- 
+ ---
 
   ##📈Résultats
 
+ ---
 ✅ Temps d’exécution : ~20 secondes (avec un captcha à remplir).
 
 ✅ Un fichier results.csv est généré contenant les informations suivantes :
