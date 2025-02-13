@@ -74,7 +74,7 @@ NetFlow est un outil de recherche d'adresse mail de professionel en fonction ave
 -⚠Il faut cocher obligatoirement une case entre Job_title, Keyword to include/exclude et Level of study pour le bon déroulement du code
 
 📝Notes:
-- Si vous voulez renseigner plusieurs mots à inclure il faut [les séparer par des virgules]
+- Si vous voulez renseigner plusieurs mots il faut [les séparer par des virgules]
 ---
 
   ##📈Résultats
