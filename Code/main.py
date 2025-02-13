@@ -44,16 +44,17 @@ def CreateRech(email,country, j_title, w_include, w_exclude, Education):
     Res += f' -intitle:"profiles"'  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
     if email is not None:
         Res +='-inurl:'
-        if email =="":
+        if unidecode(email).lower() =="all":
             emails = [
-            "gmail.com",
+            "yahoo.fr",
+            "wanadoo.fr",
             "outlook.com",
             "hotmail.fr",
-            "yahoo.fr",    
+            "gmail.com",    
             ]
             Res +=f'"{emails[0]}"'
             for i in range (1,len(emails)):
-                Res+=f'OR"{emails[i]}"'
+                Res+=f' OR "{emails[i]}"'
         else:
             Res +=f'+"@{email}"'
 
@@ -196,7 +197,7 @@ def getresults(url, max_pages):
         except Exception:
             root = tk.Tk()
             root.withdraw()  # Cache la fenêtre principale
-            messagebox.showinfo("Infos", f"Not enough results for the number of pages")
+            messagebox.showinfo("Infos", f"Not enough results for the number of pages but we continue")
             break
 
     # # Afficher les résultats
@@ -236,7 +237,6 @@ def save_to_csv(results, filename="results.csv"):
     # Chemin vers le répertoire courant (où le script est exécuté)
     current_dir = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(current_dir, filename)
-    print(f"Chemin d'enregistrement : {filepath}")  # Affiche le chemin d'accès
 
     headers = ["Identity", "Email", "Post", "Current Firm", "Link", "Full Name (Page Title)", "Other"]
 
@@ -264,7 +264,7 @@ def save_to_csv(results, filename="results.csv"):
 
     root = tk.Tk()
     root.withdraw()  # Cache la fenêtre principale
-    messagebox.showinfo("Succès", f"Fichier '{filename}' enregistré avec succès et ouvert dans le répertoire courant !")
+    messagebox.showinfo("Succès", f"Fichier '{filename}' enregistré avec succès à l'emplacement:{filepath} !")
 
 
 def get_user_input():
@@ -304,7 +304,7 @@ def get_user_input():
             selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
         )
 
-    print("\n URL Générée :", search_url) 
+    #print("\n URL Générée :", search_url) 
     results.update(getresults(search_url, selected_options["Nb_pages"]))
     # # Affichage des résultats
     # print("\n **Résultats trouvés :**")
