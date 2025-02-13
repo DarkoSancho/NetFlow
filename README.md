@@ -47,7 +47,8 @@ NetFlow est un outil de recherche d'adresse mail de professionel en fonction ave
 
 ✉️Email domain selection: 
 -Renseigner un domaine d'adresse mail précis (ex: gmail.com, yahoo.fr)
--Si la case n'est pas cochée, aucun filtre ne sera appliqué, et plusieurs domaines seront extraits.
+-Le domaine spécial [All] permet d'extraire plusieurs types d'adresses mails.
+-Si la case n'est pas cochée, vous ne chercherer pas à extraire des profils contenant une adresse mail.
 
 🌶️ 🌍 Country Alias:
 -Indiquez le pays cible de la recherche.
