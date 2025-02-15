@@ -22,46 +22,54 @@ def CreateRech(email,country, j_title, w_include, w_exclude, Education):
         root.withdraw()  # Cache la fenêtre principale
         messagebox.showerror("Erreur", "No results for your search or the search is to wide")
         sys.exit(1)
-    Res = "https://www.google.com/search?q=+"
+    Res = "https://www.google.com/search?q="
 
-    if any(param is not None for param in [j_title, w_include, w_exclude]):
+    if any(param is not None for param in [j_title, w_include]):
         if j_title is not None:
-            separated_words_j = j_title.split(',')
-            Res += ' -intitle:'
+            separated_words_j = j_title.split(',')            
             for i in range(0,len(separated_words_j)):
-                Res+=f'+"{separated_words_j[i]}"'
+                Res+= 'intitle:'
+                Res+=f'"{separated_words_j[i]}" '
         if w_include is not None:
             separated_words_i = w_include.split(',')
-            Res += ' -intitle:'
             for i in range(0,len(separated_words_i)):
-                Res+=f'+"{separated_words_i[i]}"'
-        if w_exclude is not None:
-            separated_words_e = w_exclude.split(',')
-            Res += ' -intitle:'
-            for i in range(0,len(separated_words_e)):
-                Res+=f'-"{separated_words_e[i]}"'
+                Res+=f'"{separated_words_i[i]}"'
+        Res+=' '
+    if w_exclude is not None:
+        Res+='-intitle'
+        separated_words_e = w_exclude.split(',')
+        for i in range(0,len(separated_words_e)):
+            Res+=f'"{separated_words_e[i]}"'
+        Res +=' '
 
-    Res += f' -intitle:"profiles"'  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
+
     if email is not None:
-        Res +='-inurl:'
         if unidecode(email).lower() =="all":
             emails = [
-            "yahoo.fr",
-            "wanadoo.fr",
-            "outlook.com",
-            "hotmail.fr",
-            "gmail.com",    
+                "laposte.net",
+                "sfr.fr",
+                "orange.fr",
+                "wanadoo.fr",
+                "yahoo.fr",
+                "hotmail.fr",
+                "hotmail.fr",
+                "hotmail.com",
+                "outlook.com",
+                "gmail.com"
             ]
-            Res +=f'"{emails[0]}"'
-            for i in range (1,len(emails)):
-                Res+=f' OR "{emails[i]}"'
+            Res +='('
+            for i in range (0,len(emails)-1):
+                Res+=f'"@{emails[i]}" OR '
+            Res +=f'"{emails[len(emails)-1]}") '
         else:
-            Res +=f'+"@{email}"'
+            Res +=f'"@{email}"'
+
+    Res += f' -intitle:"profiles" '  #' -intitle:"profiles" -inurl:"dir/"email"@{Email}.com"'
 
     if country is not None:
-        Res += f'+site:{country}.linkedin.com/in/+OR+site:{country}.linkedin.com/pub/'
+        Res += f'(site:{country}.linkedin.com/in/ OR site:{country}.linkedin.com/pub/)'
     else:
-        Res += '+site:linkedin.com/in/+OR+site:linkedin.com/pub/'
+        Res += '(site:linkedin.com/in/ OR site:linkedin.com/pub/)'
 
     if Education is not None:
         Education = unidecode(Education).lower()
@@ -304,8 +312,8 @@ def get_user_input():
             selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
         )
 
-    #print("\n URL Générée :", search_url) 
-    results.update(getresults(search_url, selected_options["Nb_pages"]))
+    print("\n URL Générée :", search_url) 
+    #results.update(getresults(search_url, selected_options["Nb_pages"]))
     # # Affichage des résultats
     # print("\n **Résultats trouvés :**")
     # for name, info in results.items():
@@ -316,7 +324,7 @@ def get_user_input():
     #     print(f" Link: {info['link']}")
     #     print(f" Other: {info['other']}")
     #     print("-" * 50)
-    save_to_csv(results)
+    #save_to_csv(results)
 
 
 

@@ -57,6 +57,7 @@ Au lancement de `NetFlow.exe`, la fenêtre suivante s'affiche :
 
 #### 👩‍🏭 Intitulé du poste
 - Entrez le poste recherché (ex: `Développeur`, `Avocat`).
+- Ou l'information que vous voulez impérativement voir apparaître dans la recherche: "Courtier, Assurances" pour avoir uniquement les courtiers en assurances.
 
 #### ❤️ Mots-clés à inclure
 - Ajoutez des mots-clés obligatoires (ex: `ville`, `entreprise`, `secteur`).
