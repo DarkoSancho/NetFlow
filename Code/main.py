@@ -13,6 +13,125 @@ from bs4 import BeautifulSoup
 from unidecode import unidecode
 from tkinter import messagebox
 
+regions_villes = {
+    "Auvergne-Rhône-Alpes": [
+        "Saint-Chamond",
+        "Vénissieux",
+        "Saint-Étienne",
+        "Grenoble",
+        "Villeurbanne",
+        "Clermont-Ferrand",
+        "Lyon"
+    ],
+    "Bourgogne-Franche-Comté": [
+        "Mâcon",
+        "Nevers",
+        "Auxerre",
+        "Chalon-sur-Saône",
+        "Belfort",
+        "Besançon",
+        "Dijon"
+    ],
+    "Bretagne": [
+        "Saint-Brieuc",
+        "Saint-Malo",
+        "Vannes",
+        "Lorient",
+        "Quimper",
+        "Brest",
+        "Rennes"
+    ],
+    "Centre-Val de Loire": [
+        "Dreux",
+        "Chartres",
+        "Châteauroux",
+        "Blois",
+        "Bourges",
+        "Orléans",
+        "Tours"
+    ],
+    "Corse": [
+        "Propriano",
+        "Sartène",
+        "Calvi",
+        "Corte",
+        "Porto-Vecchio",
+        "Bastia",
+        "Ajaccio"
+    ],
+    "Grand Est": [
+        "Troyes",
+        "Colmar",
+        "Nancy",
+        "Mulhouse",
+        "Metz",
+        "Reims",
+        "Strasbourg"
+    ],
+    "Hauts-de-France": [
+        "Villeneuve-d'Ascq",
+        "Calais",
+        "Dunkerque",
+        "Tourcoing",
+        "Roubaix",
+        "Amiens",
+        "Lille"
+    ],
+    "Île-de-France": [
+        "Versailles",
+        "Nanterre",
+        "Saint-Denis",
+        "Montreuil",
+        "Argenteuil",
+        "Boulogne-Billancourt",
+        "Paris"
+    ],
+    "Normandie": [
+        "Saint-Lô",
+        "Dieppe",
+        "Évreux",
+        "Cherbourg-en-Cotentin",
+        "Caen",
+        "Rouen",
+        "Le Havre"
+    ],
+    "Nouvelle-Aquitaine": [
+        "Pessac",
+        "Mérignac",
+        "La Rochelle",
+        "Pau",
+        "Poitiers",
+        "Limoges",
+        "Bordeaux"
+    ],
+    "Occitanie": [
+        "Albi",
+        "Narbonne",
+        "Béziers",
+        "Perpignan",
+        "Nîmes",
+        "Montpellier",
+        "Toulouse"
+    ],
+    "Pays de la Loire": [
+        "Laval",
+        "Cholet",
+        "La Roche-sur-Yon",
+        "Saint-Nazaire",
+        "Le Mans",
+        "Angers",
+        "Nantes"
+    ],
+    "Provence-Alpes-Côte d'Azur": [
+        "Cannes",
+        "Antibes",
+        "Avignon",
+        "Aix-en-Provence",
+        "Toulon",
+        "Nice",
+        "Marseille"
+    ]
+}
 
 
 def CreateRech(email,country, j_title, w_include, w_exclude, Education):
@@ -312,8 +431,8 @@ def get_user_input():
             selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
         )
 
-    print("\n URL Générée :", search_url) 
-    #results.update(getresults(search_url, selected_options["Nb_pages"]))
+    #print("\n URL Générée :", search_url) 
+    results.update(getresults(search_url, selected_options["Nb_pages"]))
     # # Affichage des résultats
     # print("\n **Résultats trouvés :**")
     # for name, info in results.items():
@@ -324,7 +443,7 @@ def get_user_input():
     #     print(f" Link: {info['link']}")
     #     print(f" Other: {info['other']}")
     #     print("-" * 50)
-    #save_to_csv(results)
+    save_to_csv(results)
 
 
 
@@ -354,7 +473,7 @@ subtitle.pack()
 options = {
     "email": "Email domain selection(e.g : gmail.com, yahoo.fr, etc.)",
     "country": "Country Alias (e.g : fr, us, ca...)",
-    "j_title": "Job title (e.g. Developer, Data Scientist)",
+    "j_title": "Job title OR The most specific e.g. [Courtier, Assurances])",
     "w_include": "Keyword to include",
     "w_exclude": "Keyword to exclude",
     "Education": "Level of study ( in Bachelor, Master, Doctoral)",
