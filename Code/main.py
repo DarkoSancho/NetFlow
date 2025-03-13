@@ -12,6 +12,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from unidecode import unidecode
 from tkinter import messagebox
+from tkinter import ttk
+
 
 regions_villes = {
     "Auvergne-Rhône-Alpes": [
@@ -134,7 +136,9 @@ regions_villes = {
 }
 
 
-def CreateRech(email,country, j_title, w_include, w_exclude, Education):
+regions = ["None"]+list(regions_villes.keys())
+
+def CreateRech(email,country, j_title, w_include, w_exclude, Education, area):
     """ Crée la recherche en fonction des filtres (None si pas de filtre)"""
     if all(param is None for param in [country, j_title, w_include, w_exclude, Education]):
         root = tk.Tk()
@@ -143,7 +147,7 @@ def CreateRech(email,country, j_title, w_include, w_exclude, Education):
         sys.exit(1)
     Res = "https://www.google.com/search?q="
 
-    if any(param is not None for param in [j_title, w_include]):
+    if any(param is not None for param in [j_title, w_include, area]):
         if j_title is not None:
             separated_words_j = j_title.split(',')            
             for i in range(0,len(separated_words_j)):
@@ -153,6 +157,17 @@ def CreateRech(email,country, j_title, w_include, w_exclude, Education):
             separated_words_i = w_include.split(',')
             for i in range(0,len(separated_words_i)):
                 Res+=f'"{separated_words_i[i]}"'
+        if area is not None:
+            separated_words_a = w_include.split(',')
+            for i in range(0,len(separated_words_a)):
+                if separated_words_a[i] in regions_villes.keys():
+                    for elem in regions_villes[separated_words_a[i]]:
+                        Res +=f'"{elem}" OR '
+                else:
+                    messagebox.showerror("Erreur", "Name of the area is unvalid")
+                    sys.exit(1)
+            if Res.endswith(" OR "):  
+                 Res = Res[:-4]              
         Res+=' '
     if w_exclude is not None:
         Res+='-intitle'
@@ -403,9 +418,17 @@ def get_user_input():
             value = entry_vars[key].get().strip()
             selected_options[key] = value if value else None  
         else:
-            selected_options[key] = None 
+            selected_options[key] = None  
 
+    # Gestion du champ Education et Area
+    for key in ["area", "Education"]:
+        value = entry_vars[key].get().strip()
+        if value.lower() == "none":
+            selected_options[key] = None  # Convertit "None" en None
+        else:
+            selected_options[key] = value
 
+    # Vérification du champ Nb_pages
     nb_pages = entry_vars["Nb_pages"].get().strip()
     if nb_pages.isdigit() and int(nb_pages) > 0:
         selected_options["Nb_pages"] = int(nb_pages)
@@ -413,44 +436,37 @@ def get_user_input():
         messagebox.showerror("Erreur", "Please enter a positive integer for the number of pages.")
         return  
 
-    if selected_options["country"] and len(selected_options["country"]) > 2:
-        messagebox.showerror("Error","The country alias is requested (e.g. fr, us , uk).")
+    # Vérification du champ Country
+    if selected_options.get("country") and len(selected_options["country"]) > 2:
+        messagebox.showerror("Error", "The country alias is requested (e.g. fr, us, uk).")
         return
 
     root.quit()
     root.destroy()
 
-    for key, value in selected_options.items():
-        if value == "None":
-            selected_options[key] = None
-    
-    results={}
+    # Affichage des valeurs récupérées pour débogage
+    print("Selected options:", selected_options)
 
     search_url = CreateRech(
-            selected_options["email"], selected_options["country"], selected_options["j_title"],
-            selected_options["w_include"], selected_options["w_exclude"], selected_options["Education"],
-        )
+        selected_options.get("email"), selected_options.get("country"), selected_options.get("j_title"),
+        selected_options.get("w_include"), selected_options.get("w_exclude"), selected_options.get("Education"), selected_options.get("area")
+    )
 
-    #print("\n URL Générée :", search_url) 
-    results.update(getresults(search_url, selected_options["Nb_pages"]))
-    # # Affichage des résultats
-    # print("\n **Résultats trouvés :**")
-    # for name, info in results.items():
-    #     print(f" Name: {info['identity']}")
-    #     print(f" Email: {info['email']}")
-    #     print(f" Post: {info['poste']}")
-    #     print(f" Current firm: {info['entreprise']}")
-    #     print(f" Link: {info['link']}")
-    #     print(f" Other: {info['other']}")
-    #     print("-" * 50)
-    save_to_csv(results)
+    print("\n URL Générée :", search_url)
+
+    results = getresults(search_url, selected_options.get("Nb_pages", 1))
+    
+    if results:
+        save_to_csv(results)
+    else:
+        messagebox.showerror("Erreur", "No data retrieved from search.")
 
 
 
 # **Interface Graphique avec Tkinter**
 root = tk.Tk()
 root.title("Research options")
-root.geometry("500x500")
+root.geometry("700x500")
 
 bg_color = "#f5f5f5"  # Couleur de fond 
 title_color = "#333333"  # Couleur du texte
@@ -473,28 +489,42 @@ subtitle.pack()
 options = {
     "email": "Email domain selection(e.g : gmail.com, yahoo.fr, etc.)",
     "country": "Country Alias (e.g : fr, us, ca...)",
-    "j_title": "Job title OR The most specific e.g. [Courtier, Assurances])",
+    "j_title": "Job title OR The most specific (e.g. [Courtier, Assurances])",
     "w_include": "Keyword to include",
     "w_exclude": "Keyword to exclude",
     "Education": "Level of study ( in Bachelor, Master, Doctoral)",
+    "area": "Area of researches "
 }
 
 check_vars = {}
 entry_vars = {}
 
-# Création des checkboxes 
 for key, desc in options.items():
-    check_vars[key] = tk.BooleanVar() #cheekbox
-    entry_vars[key] = tk.StringVar() #Champ de texte
-
     frame = tk.Frame(root)
+    
+    if key == "area":
+        tk.Label(frame, text=desc, font=("Arial", 10)).pack(side="left")  # Ajout d'un label descriptif
+        entry_vars[key] = tk.StringVar()
+        dropdown = ttk.Combobox(frame, textvariable=entry_vars[key], values=regions, state="readonly")
+        dropdown.pack(side="right")
+        dropdown.current(0)  # Sélectionne "None" par défaut
+    elif key == "Education":        
+        tk.Label(frame, text=desc, font=("Arial", 10)).pack(side="left")  # Ajout d'un label descriptif
+        entry_vars[key] = tk.StringVar()
+        dropdown = ttk.Combobox(frame, textvariable=entry_vars[key], values=["None","Bachelor","Master","Doctoral"], state="readonly")
+        dropdown.pack(side="right")
+        dropdown.current(0)  # Sélectionne "None" par défaut
+    else:
+        # Checkbox + champ texte standard
+        check_vars[key] = tk.BooleanVar()
+        checkbox = tk.Checkbutton(frame, text=desc, variable=check_vars[key])
+        checkbox.pack(side="left")
+        entry_vars[key] = tk.StringVar()
+        entry = tk.Entry(frame, textvariable=entry_vars[key], width=25)
+        entry.pack(side="right")
+
     frame.pack(fill="x", padx=10, pady=5)
 
-    checkbox = tk.Checkbutton(frame, text=desc, variable=check_vars[key])
-    checkbox.pack(side="left")
-
-    entry = tk.Entry(frame, textvariable=entry_vars[key], width=25)
-    entry.pack(side="right")
 
 # Champ pour le nombre de pages
 frame_pages = tk.Frame(root)
@@ -511,7 +541,3 @@ validate_button = tk.Button(root, text="Confirm", command=get_user_input,
 validate_button.pack(pady=20)
 
 root.mainloop()
-
-
-
-
