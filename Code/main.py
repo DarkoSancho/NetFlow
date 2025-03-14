@@ -17,8 +17,6 @@ from tkinter import ttk
 
 regions_villes = {
     "Auvergne-Rhône-Alpes": [
-        "Saint-Chamond",
-        "Vénissieux",
         "Saint-Étienne",
         "Grenoble",
         "Villeurbanne",
@@ -26,8 +24,6 @@ regions_villes = {
         "Lyon"
     ],
     "Bourgogne-Franche-Comté": [
-        "Mâcon",
-        "Nevers",
         "Auxerre",
         "Chalon-sur-Saône",
         "Belfort",
@@ -35,8 +31,6 @@ regions_villes = {
         "Dijon"
     ],
     "Bretagne": [
-        "Saint-Brieuc",
-        "Saint-Malo",
         "Vannes",
         "Lorient",
         "Quimper",
@@ -44,8 +38,6 @@ regions_villes = {
         "Rennes"
     ],
     "Centre-Val de Loire": [
-        "Dreux",
-        "Chartres",
         "Châteauroux",
         "Blois",
         "Bourges",
@@ -53,8 +45,6 @@ regions_villes = {
         "Tours"
     ],
     "Corse": [
-        "Propriano",
-        "Sartène",
         "Calvi",
         "Corte",
         "Porto-Vecchio",
@@ -62,8 +52,6 @@ regions_villes = {
         "Ajaccio"
     ],
     "Grand Est": [
-        "Troyes",
-        "Colmar",
         "Nancy",
         "Mulhouse",
         "Metz",
@@ -71,8 +59,6 @@ regions_villes = {
         "Strasbourg"
     ],
     "Hauts-de-France": [
-        "Villeneuve-d'Ascq",
-        "Calais",
         "Dunkerque",
         "Tourcoing",
         "Roubaix",
@@ -80,8 +66,6 @@ regions_villes = {
         "Lille"
     ],
     "Île-de-France": [
-        "Versailles",
-        "Nanterre",
         "Saint-Denis",
         "Montreuil",
         "Argenteuil",
@@ -98,8 +82,6 @@ regions_villes = {
         "Le Havre"
     ],
     "Nouvelle-Aquitaine": [
-        "Pessac",
-        "Mérignac",
         "La Rochelle",
         "Pau",
         "Poitiers",
@@ -107,8 +89,6 @@ regions_villes = {
         "Bordeaux"
     ],
     "Occitanie": [
-        "Albi",
-        "Narbonne",
         "Béziers",
         "Perpignan",
         "Nîmes",
@@ -116,8 +96,6 @@ regions_villes = {
         "Toulouse"
     ],
     "Pays de la Loire": [
-        "Laval",
-        "Cholet",
         "La Roche-sur-Yon",
         "Saint-Nazaire",
         "Le Mans",
@@ -125,8 +103,6 @@ regions_villes = {
         "Nantes"
     ],
     "Provence-Alpes-Côte d'Azur": [
-        "Cannes",
-        "Antibes",
         "Avignon",
         "Aix-en-Provence",
         "Toulon",
@@ -158,16 +134,14 @@ def CreateRech(email,country, j_title, w_include, w_exclude, Education, area):
             for i in range(0,len(separated_words_i)):
                 Res+=f'"{separated_words_i[i]}"'
         if area is not None:
-            separated_words_a = w_include.split(',')
-            for i in range(0,len(separated_words_a)):
-                if separated_words_a[i] in regions_villes.keys():
-                    for elem in regions_villes[separated_words_a[i]]:
+                if area in regions_villes.keys():
+                    for elem in regions_villes[area]:
                         Res +=f'"{elem}" OR '
                 else:
                     messagebox.showerror("Erreur", "Name of the area is unvalid")
                     sys.exit(1)
-            if Res.endswith(" OR "):  
-                 Res = Res[:-4]              
+                if Res.endswith(" OR "):  
+                    Res = Res[:-4]              
         Res+=' '
     if w_exclude is not None:
         Res+='-intitle'
@@ -264,7 +238,7 @@ def remove_html_tags(text):
 def getresults(url, max_pages):
     """Récupère les résultats de l'url sur max_pages pages"""
     options = webdriver.FirefoxOptions()
-    # options.add_argument("--headless")  # Exécute sans ouvrir une fenêtre
+    #options.add_argument("--headless")  # Exécute sans ouvrir une fenêtre
     driver = webdriver.Firefox(options=options)
 
 
@@ -287,8 +261,8 @@ def getresults(url, max_pages):
 
 
 
-    driver.minimize_window()  # Réduit la fenêtre
-    driver.execute_script("document.body.style.zoom='0.1'")  
+    #driver.minimize_window()  # Réduit la fenêtre
+    #driver.execute_script("document.body.style.zoom='0.1'")  
 
     data_collected = {}
     page_number = 1
